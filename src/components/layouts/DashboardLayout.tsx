@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import Logo from '@/components/Logo';
+import UserMenu from '@/components/UserMenu';
 import { 
   SidebarProvider, 
   Sidebar, 
@@ -81,6 +82,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </Sidebar>
         
         <main className="flex-1 overflow-x-hidden">
+          <div className="border-b border-gray-200 bg-white p-4 flex justify-end">
+            <UserMenu />
+          </div>
           {children}
         </main>
       </div>
