@@ -1,5 +1,6 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Logo from '@/components/Logo';
 import UserMenu from '@/components/UserMenu';
 import { 
@@ -20,7 +21,8 @@ import {
   HelpCircle, 
   AlertCircle, 
   FileText, 
-  Settings 
+  Settings,
+  Share2
 } from 'lucide-react';
 
 interface DashboardLayoutProps {
@@ -28,10 +30,21 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const location = useLocation();
   const [activeItem, setActiveItem] = useState('dashboard');
+
+  useEffect(() => {
+    const path = location.pathname.split('/')[1];
+    if (path) {
+      setActiveItem(path);
+    } else {
+      setActiveItem('dashboard');
+    }
+  }, [location]);
 
   const navigationItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+    { id: 'workflow', icon: Share2, label: 'Workflow', path: '/workflow' },
     { id: 'connections', icon: Link, label: 'Connections', path: '/connections' },
     { id: 'templates', icon: FileText, label: 'Templates', path: '/templates' },
     { id: 'calendar', icon: Calendar, label: 'Calendar', path: '/calendar' },

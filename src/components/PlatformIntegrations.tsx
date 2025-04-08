@@ -1,15 +1,16 @@
 
 import React from 'react';
+import { Facebook, Instagram, Twitter, Linkedin, Youtube, Music, PenTool, Globe } from 'lucide-react';
 
 const platforms = [
-  { name: 'YouTube', logo: '🔴' },
-  { name: 'Instagram', logo: '📸' },
-  { name: 'TikTok', logo: '🎵' },
-  { name: 'Facebook', logo: '👥' },
-  { name: 'Twitter', logo: '🐦' },
-  { name: 'LinkedIn', logo: '💼' },
-  { name: 'Pinterest', logo: '📌' },
-  { name: 'Spotify', logo: '🎧' },
+  { name: 'YouTube', logo: <Youtube className="h-10 w-10 text-red-600" /> },
+  { name: 'Instagram', logo: <Instagram className="h-10 w-10 text-pink-500" /> },
+  { name: 'TikTok', logo: <Music className="h-10 w-10 text-black" /> },
+  { name: 'Facebook', logo: <Facebook className="h-10 w-10 text-blue-600" /> },
+  { name: 'Twitter', logo: <Twitter className="h-10 w-10 text-blue-400" /> },
+  { name: 'LinkedIn', logo: <Linkedin className="h-10 w-10 text-blue-700" /> },
+  { name: 'Pinterest', logo: <PenTool className="h-10 w-10 text-red-500" /> },
+  { name: 'Spotify', logo: <Music className="h-10 w-10 text-green-500" /> },
 ];
 
 const PlatformIntegrations = () => {
@@ -29,7 +30,7 @@ const PlatformIntegrations = () => {
               key={index} 
               className="bg-white rounded-xl p-6 shadow-sm flex flex-col items-center justify-center border border-gray-200 hover:shadow-md transition-shadow"
             >
-              <div className="text-4xl mb-3">{platform.logo}</div>
+              <div className="mb-3">{platform.logo}</div>
               <div className="font-medium">{platform.name}</div>
             </div>
           ))}

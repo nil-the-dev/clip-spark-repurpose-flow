@@ -8,6 +8,7 @@ import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Connections from "./pages/Connections";
+import Workflow from "./pages/Workflow";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -36,6 +37,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Connections />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/workflow" 
+              element={
+                <ProtectedRoute>
+                  <Workflow />
                 </ProtectedRoute>
               } 
             />
