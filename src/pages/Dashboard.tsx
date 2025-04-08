@@ -1,14 +1,14 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Play, Upload } from 'lucide-react';
+import { PlusCircle, Play, Upload, Link } from 'lucide-react';
+import DashboardLayout from '@/components/layouts/DashboardLayout';
 
 const Dashboard = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 py-4">
-        <div className="container mx-auto px-4 flex justify-between items-center">
+    <DashboardLayout>
+      <div className="p-6">
+        <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <div className="flex items-center space-x-4">
             <Button variant="outline" className="flex items-center">
@@ -21,9 +21,7 @@ const Dashboard = () => {
             </Button>
           </div>
         </div>
-      </header>
-      
-      <main className="container mx-auto px-4 py-8">
+        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="pb-2">
@@ -48,7 +46,13 @@ const Dashboard = () => {
               <CardTitle className="text-sm font-medium text-gray-500">Connected Platforms</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">5/7</div>
+              <div className="flex items-center">
+                <div className="text-3xl font-bold">5/7</div>
+                <Button variant="ghost" size="sm" className="ml-auto text-primary">
+                  <Link className="mr-1 h-4 w-4" /> 
+                  Manage
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -132,8 +136,8 @@ const Dashboard = () => {
             ))}
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 };
 
