@@ -9,6 +9,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Connections from "./pages/Connections";
 import Workflow from "./pages/Workflow";
+import Templates from "./pages/Templates";
+import CalendarPage from "./pages/CalendarPage";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -45,6 +47,22 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Workflow />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/templates" 
+              element={
+                <ProtectedRoute>
+                  <Templates />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/calendar" 
+              element={
+                <ProtectedRoute>
+                  <CalendarPage />
                 </ProtectedRoute>
               } 
             />
