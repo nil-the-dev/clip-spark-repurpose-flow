@@ -9,12 +9,7 @@ import {
   SheetFooter
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { 
-  Repeat, 
-  ListVideo, 
-  Video, 
-  CloudUpload
-} from 'lucide-react';
+import { Repeat, ListVideo } from 'lucide-react';
 
 interface CreateWorkflowDialogProps {
   isOpen: boolean;
