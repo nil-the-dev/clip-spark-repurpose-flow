@@ -1,35 +1,14 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, Clock, ArrowRight, Play, Pause } from 'lucide-react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
+import CreateWorkflowDialog from '@/components/workflow/CreateWorkflowDialog';
 
 const Workflow = () => {
-  const workflowTemplates = [
-    {
-      title: 'YouTube to Short-Form',
-      description: 'Convert YouTube videos to TikTok, Reels, and Shorts',
-      icon: '🎬',
-    },
-    {
-      title: 'Podcast Repurposing',
-      description: 'Turn podcast episodes into audiograms and clips',
-      icon: '🎙️',
-    },
-    {
-      title: 'Blog Content Automation',
-      description: 'Convert blog posts into carousel posts and threads',
-      icon: '📝',
-    },
-    {
-      title: 'Live Stream Highlights',
-      description: 'Extract and optimize key moments from live streams',
-      icon: '📺',
-    },
-  ];
-
-  const activeWorkflows = [
+  const [isWorkflowDialogOpen, setIsWorkflowDialogOpen] = useState(false);
+  const [activeWorkflows, setActiveWorkflows] = useState([
     {
       name: "YouTube to Short-Form",
       description: "Convert YouTube videos to TikTok, Reels, and Shorts",
@@ -54,14 +33,41 @@ const Workflow = () => {
       lastRun: "5 days ago",
       nextRun: "Not scheduled"
     }
+  ]);
+
+  const workflowTemplates = [
+    {
+      title: 'YouTube to Short-Form',
+      description: 'Convert YouTube videos to TikTok, Reels, and Shorts',
+      icon: '🎬',
+    },
+    {
+      title: 'Podcast Repurposing',
+      description: 'Turn podcast episodes into audiograms and clips',
+      icon: '🎙️',
+    },
+    {
+      title: 'Blog Content Automation',
+      description: 'Convert blog posts into carousel posts and threads',
+      icon: '📝',
+    },
+    {
+      title: 'Live Stream Highlights',
+      description: 'Extract and optimize key moments from live streams',
+      icon: '📺',
+    },
   ];
+
+  const openWorkflowDialog = () => {
+    setIsWorkflowDialogOpen(true);
+  };
 
   return (
     <DashboardLayout>
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Workflow Management</h1>
-          <Button className="gradient-bg flex items-center">
+          <Button className="gradient-bg flex items-center" onClick={openWorkflowDialog}>
             <Plus className="mr-2 h-4 w-4" />
             Create New Workflow
           </Button>
@@ -125,6 +131,12 @@ const Workflow = () => {
           </div>
         </div>
       </div>
+      
+      <CreateWorkflowDialog 
+        isOpen={isWorkflowDialogOpen}
+        onClose={() => setIsWorkflowDialogOpen(false)}
+        isFirstWorkflow={activeWorkflows.length === 0}
+      />
     </DashboardLayout>
   );
 };

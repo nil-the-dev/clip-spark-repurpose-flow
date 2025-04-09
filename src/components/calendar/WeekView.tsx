@@ -28,16 +28,16 @@ const WeekView: React.FC<WeekViewProps> = ({ currentDate, scheduledPosts, onSele
   const days = [];
   
   const getPlatformIcon = (platform: string) => {
-    switch (platform) {
-      case 'Instagram':
+    switch (platform.toLowerCase()) {
+      case 'instagram':
         return <Instagram className="h-4 w-4" />;
-      case 'Twitter':
+      case 'twitter':
         return <Twitter className="h-4 w-4" />;
-      case 'Youtube':
+      case 'youtube':
         return <Youtube className="h-4 w-4" />;
-      case 'Linkedin':
+      case 'linkedin':
         return <Linkedin className="h-4 w-4" />;
-      case 'Facebook':
+      case 'facebook':
         return <Facebook className="h-4 w-4" />;
       default:
         return null;

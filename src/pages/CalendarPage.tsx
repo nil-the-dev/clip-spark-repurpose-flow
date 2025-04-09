@@ -20,6 +20,7 @@ import { Toggle } from '@/components/ui/toggle';
 import MonthView from '@/components/calendar/MonthView';
 import WeekView from '@/components/calendar/WeekView';
 import DayView from '@/components/calendar/DayView';
+import CreateWorkflowDialog from '@/components/workflow/CreateWorkflowDialog';
 
 interface ScheduledPost {
   id: number;
@@ -92,6 +93,7 @@ const CalendarPage = () => {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [view, setView] = useState<'month' | 'week' | 'day'>('month');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [isWorkflowDialogOpen, setIsWorkflowDialogOpen] = useState(false);
 
   const navigatePrevious = () => {
     if (view === 'month') {
@@ -138,6 +140,10 @@ const CalendarPage = () => {
     }
   };
 
+  const openWorkflowDialog = () => {
+    setIsWorkflowDialogOpen(true);
+  };
+
   return (
     <DashboardLayout>
       <div className="p-4 md:p-6">
@@ -182,7 +188,7 @@ const CalendarPage = () => {
               </Toggle>
             </div>
             
-            <Button className="ml-4 gradient-bg">
+            <Button className="ml-4 gradient-bg" onClick={openWorkflowDialog}>
               <Plus className="mr-1 h-4 w-4" />
               New Post
             </Button>
@@ -212,6 +218,12 @@ const CalendarPage = () => {
           )}
         </div>
       </div>
+
+      <CreateWorkflowDialog 
+        isOpen={isWorkflowDialogOpen}
+        onClose={() => setIsWorkflowDialogOpen(false)}
+        isFirstWorkflow={true}
+      />
     </DashboardLayout>
   );
 };
