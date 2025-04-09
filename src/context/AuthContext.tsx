@@ -1,6 +1,5 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
@@ -22,6 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     // First, set up the auth state listener
@@ -30,13 +30,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
         
-        // Use setTimeout to avoid potential Supabase client deadlocks
-        if (currentSession?.user) {
-          setTimeout(() => {
-            if (event === 'SIGNED_IN') {
-              navigate('/dashboard');
-            }
-          }, 0);
+        // Only redirect on explicit sign in events, not on page reload
+        if (currentSession?.user && event === 'SIGNED_IN') {
+          // Get the intended destination from the location state, or default to dashboard
+          const from = location.state?.from?.pathname || '/dashboard';
+          setTimeout(() => navigate(from, { replace: true }), 0);
         }
       }
     );
@@ -49,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, location]);
 
   const signIn = async (email: string, password: string) => {
     try {
