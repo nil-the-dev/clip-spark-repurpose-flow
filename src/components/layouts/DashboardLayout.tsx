@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Logo from '@/components/Logo';
 import UserMenu from '@/components/UserMenu';
 import { 
@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/sidebar';
 import { 
   LayoutDashboard, 
-  Link, 
+  Link as LinkIcon, 
   Calendar, 
   Star, 
   DollarSign, 
@@ -45,7 +45,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const navigationItems = [
     { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
     { id: 'workflow', icon: Share2, label: 'Workflow', path: '/workflow' },
-    { id: 'connections', icon: Link, label: 'Connections', path: '/connections' },
+    { id: 'connections', icon: LinkIcon, label: 'Connections', path: '/connections' },
     { id: 'templates', icon: FileText, label: 'Templates', path: '/templates' },
     { id: 'calendar', icon: Calendar, label: 'Calendar', path: '/calendar' },
     { id: 'divider1', type: 'divider' },
@@ -82,10 +82,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                       isActive={isActive}
                       onClick={() => setActiveItem(item.id)}
                     >
-                      <a href={item.path}>
+                      <Link to={item.path}>
                         <Icon className="h-5 w-5" />
                         <span>{item.label}</span>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );

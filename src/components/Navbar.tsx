@@ -32,19 +32,23 @@ const Navbar = () => {
             <Link to="/dashboard" className="text-gray-700 hover:text-primary transition-colors">
               Dashboard
             </Link>
-            <Link to="/workflows" className="text-gray-700 hover:text-primary transition-colors">
+            <Link to="/workflow" className="text-gray-700 hover:text-primary transition-colors">
               Workflows
             </Link>
-            <Link to="/analytics" className="text-gray-700 hover:text-primary transition-colors">
-              Analytics
+            <Link to="/connections" className="text-gray-700 hover:text-primary transition-colors">
+              Connections
             </Link>
             <Link to="/pricing" className="text-gray-700 hover:text-primary transition-colors">
               Pricing
             </Link>
 
             <div className="flex items-center space-x-3">
-              <Button variant="outline">Log In</Button>
-              <Button className="gradient-bg">Sign Up</Button>
+              <Button variant="outline" asChild>
+                <Link to="/auth">Log In</Link>
+              </Button>
+              <Button className="gradient-bg" asChild>
+                <Link to="/auth?tab=signup">Sign Up</Link>
+              </Button>
             </div>
           </div>
 
@@ -74,18 +78,18 @@ const Navbar = () => {
             Dashboard
           </Link>
           <Link 
-            to="/workflows" 
+            to="/workflow" 
             className="block py-3 px-4 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-md"
             onClick={() => setIsMenuOpen(false)}
           >
             Workflows
           </Link>
           <Link 
-            to="/analytics" 
+            to="/connections" 
             className="block py-3 px-4 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-md"
             onClick={() => setIsMenuOpen(false)}
           >
-            Analytics
+            Connections
           </Link>
           <Link 
             to="/pricing" 
@@ -95,8 +99,12 @@ const Navbar = () => {
             Pricing
           </Link>
           <div className="pt-4 space-y-3">
-            <Button variant="outline" className="w-full">Log In</Button>
-            <Button className="w-full gradient-bg">Sign Up</Button>
+            <Button variant="outline" className="w-full" asChild>
+              <Link to="/auth" onClick={() => setIsMenuOpen(false)}>Log In</Link>
+            </Button>
+            <Button className="w-full gradient-bg" asChild>
+              <Link to="/auth?tab=signup" onClick={() => setIsMenuOpen(false)}>Sign Up</Link>
+            </Button>
           </div>
         </div>
       </div>
