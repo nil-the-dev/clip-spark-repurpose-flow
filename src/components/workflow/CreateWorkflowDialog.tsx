@@ -9,7 +9,7 @@ import {
   DialogFooter
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Repeat, ListVideo } from 'lucide-react';
+import { Plus, Repeat, ListVideo, Share2 } from 'lucide-react';
 
 interface CreateWorkflowDialogProps {
   isOpen: boolean;
@@ -23,6 +23,9 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
   isFirstWorkflow = true
 }) => {
   const [selectedWorkflowType, setSelectedWorkflowType] = useState<string | null>(null);
+  const [selectedSource, setSelectedSource] = useState<string | null>(null);
+  const [selectedDestinations, setSelectedDestinations] = useState<string[]>([]);
+  const [isAddingDestination, setIsAddingDestination] = useState(false);
   
   const workflowTypes = [
     {
@@ -36,15 +39,67 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
       name: 'Repurpose existing content',
       icon: <ListVideo className="h-6 w-6" />,
       description: 'Automatically schedule and publish your existing content from your Source platform to your Destination up to 5 times per day.'
+    },
+    {
+      id: 'multiple',
+      name: 'Repurpose one source to multiple destinations',
+      icon: <Share2 className="h-6 w-6" />,
+      description: 'Select one source and multiple destinations to repurpose your content across various platforms.'
     }
   ];
 
+  const platforms = {
+    sources: [
+      { id: 'tiktok', name: 'TikTok', icon: 'https://upload.wikimedia.org/wikipedia/commons/e/ed/Logo_of_TikTok_%282018-2022%29.svg' },
+      { id: 'instagram', name: 'Instagram', icon: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg' },
+      { id: 'facebook', name: 'Facebook', icon: 'https://upload.wikimedia.org/wikipedia/commons/c/c2/F_icon.svg' },
+      { id: 'dropbox', name: 'Dropbox', icon: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Dropbox_logo.svg' }
+    ],
+    destinations: [
+      { id: 'tiktok', name: 'TikTok', icon: 'https://upload.wikimedia.org/wikipedia/commons/e/ed/Logo_of_TikTok_%282018-2022%29.svg' },
+      { id: 'instagram', name: 'Instagram', icon: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg' },
+      { id: 'youtube', name: 'YouTube', icon: 'https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg' },
+      { id: 'facebook', name: 'Facebook', icon: 'https://upload.wikimedia.org/wikipedia/commons/c/c2/F_icon.svg' }
+    ]
+  };
+
   const handleSelection = (workflowId: string) => {
     setSelectedWorkflowType(workflowId);
+    setSelectedSource(null);
+    setSelectedDestinations([]);
+    setIsAddingDestination(false);
+  };
+
+  const handleSourceSelection = (sourceId: string) => {
+    setSelectedSource(sourceId);
+  };
+
+  const handleDestinationSelection = (destinationId: string) => {
+    if (selectedWorkflowType === 'multiple') {
+      if (!selectedDestinations.includes(destinationId)) {
+        setSelectedDestinations([...selectedDestinations, destinationId]);
+        setIsAddingDestination(false);
+      }
+    } else {
+      setSelectedDestinations([destinationId]);
+    }
+  };
+
+  const handleAddDestination = () => {
+    setIsAddingDestination(true);
+  };
+
+  const handleRemoveDestination = (index: number) => {
+    const updatedDestinations = [...selectedDestinations];
+    updatedDestinations.splice(index, 1);
+    setSelectedDestinations(updatedDestinations);
   };
 
   const handleClose = () => {
     setSelectedWorkflowType(null);
+    setSelectedSource(null);
+    setSelectedDestinations([]);
+    setIsAddingDestination(false);
     onClose();
   };
 
@@ -87,65 +142,120 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
         {selectedWorkflowType && (
           <div className="mt-8 pt-8 border-t">
             <h3 className="font-medium text-xl mb-3">
-              {selectedWorkflowType === 'future' ? 'Repurpose future content' : 'Repurpose existing content'}
+              {selectedWorkflowType === 'future' 
+                ? 'Repurpose future content' 
+                : selectedWorkflowType === 'existing' 
+                ? 'Repurpose existing content'
+                : 'Repurpose one source to multiple destinations'}
             </h3>
             <p className="text-gray-600 mb-6">
               {selectedWorkflowType === 'future' 
                 ? 'Whenever you upload new content to your Source platform, it will be automatically published to your Destination within 2 hours.'
-                : 'Automatically schedule and publish your existing content from your Source platform to your Destination up to 5 times per day.'}
+                : selectedWorkflowType === 'existing' 
+                ? 'Automatically schedule and publish your existing content from your Source platform to your Destination up to 5 times per day.'
+                : 'Select one source and add multiple destinations to repurpose your content across various platforms.'}
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h4 className="font-medium mb-3">Source (choose one)</h4>
                 <div className="space-y-2">
-                  <div className="p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/ed/Logo_of_TikTok_%282018-2022%29.svg" 
-                         alt="TikTok" className="h-6 w-6 mr-2" />
-                    <span>TikTok</span>
-                  </div>
-                  <div className="p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" 
-                         alt="Instagram" className="h-6 w-6 mr-2" />
-                    <span>Instagram</span>
-                  </div>
-                  <div className="p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/F_icon.svg" 
-                         alt="Facebook" className="h-6 w-6 mr-2" />
-                    <span>Facebook</span>
-                  </div>
-                  <div className="p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d4/Dropbox_logo.svg" 
-                         alt="Dropbox" className="h-6 w-6 mr-2" />
-                    <span>Dropbox</span>
-                  </div>
+                  {platforms.sources.map((platform) => (
+                    <div 
+                      key={platform.id}
+                      onClick={() => handleSourceSelection(platform.id)}
+                      className={`p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer ${
+                        selectedSource === platform.id ? 'border-primary bg-primary/5' : ''
+                      }`}
+                    >
+                      <img src={platform.icon} 
+                           alt={platform.name} className="h-6 w-6 mr-2" />
+                      <span>{platform.name}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
               <div>
-                <h4 className="font-medium mb-3">Destination (choose one)</h4>
-                <div className="space-y-2">
-                  <div className="p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/ed/Logo_of_TikTok_%282018-2022%29.svg" 
-                         alt="TikTok" className="h-6 w-6 mr-2" />
-                    <span>TikTok</span>
+                {selectedWorkflowType === 'multiple' ? (
+                  <div>
+                    <h4 className="font-medium mb-3">Destinations</h4>
+                    {selectedDestinations.length > 0 ? (
+                      <div className="space-y-2 mb-4">
+                        {selectedDestinations.map((destId, index) => {
+                          const destination = platforms.destinations.find(d => d.id === destId);
+                          return (
+                            <div key={`${destId}-${index}`} className="p-3 border rounded-md flex items-center justify-between">
+                              <div className="flex items-center">
+                                <img src={destination?.icon} 
+                                     alt={destination?.name} className="h-6 w-6 mr-2" />
+                                <span>{destination?.name}</span>
+                              </div>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="text-gray-500 hover:text-red-500"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRemoveDestination(index);
+                                }}
+                              >
+                                Remove
+                              </Button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : null}
+
+                    {isAddingDestination ? (
+                      <div className="space-y-2">
+                        <h5 className="text-sm font-medium">Select a destination to add:</h5>
+                        {platforms.destinations
+                          .filter(d => !selectedDestinations.includes(d.id))
+                          .map((platform) => (
+                            <div 
+                              key={platform.id}
+                              onClick={() => handleDestinationSelection(platform.id)}
+                              className="p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer"
+                            >
+                              <img src={platform.icon} 
+                                   alt={platform.name} className="h-6 w-6 mr-2" />
+                              <span>{platform.name}</span>
+                            </div>
+                          ))}
+                      </div>
+                    ) : (
+                      <Button 
+                        variant="outline" 
+                        className="w-full mt-4 flex items-center justify-center"
+                        onClick={handleAddDestination}
+                      >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Destination
+                      </Button>
+                    )}
                   </div>
-                  <div className="p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" 
-                         alt="Instagram" className="h-6 w-6 mr-2" />
-                    <span>Instagram</span>
+                ) : (
+                  <div>
+                    <h4 className="font-medium mb-3">Destination (choose one)</h4>
+                    <div className="space-y-2">
+                      {platforms.destinations.map((platform) => (
+                        <div 
+                          key={platform.id}
+                          onClick={() => handleDestinationSelection(platform.id)}
+                          className={`p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer ${
+                            selectedDestinations[0] === platform.id ? 'border-primary bg-primary/5' : ''
+                          }`}
+                        >
+                          <img src={platform.icon} 
+                               alt={platform.name} className="h-6 w-6 mr-2" />
+                          <span>{platform.name}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className="p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg" 
-                         alt="YouTube" className="h-6 w-6 mr-2" />
-                    <span>YouTube</span>
-                  </div>
-                  <div className="p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/F_icon.svg" 
-                         alt="Facebook" className="h-6 w-6 mr-2" />
-                    <span>Facebook</span>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
@@ -168,7 +278,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
             Cancel
           </Button>
           {selectedWorkflowType && (
-            <Button className="bg-pink-500 hover:bg-pink-600 text-white">
+            <Button className="bg-pink-500 hover:bg-pink-600 text-white" disabled={!selectedSource || selectedDestinations.length === 0}>
               Create Workflow
             </Button>
           )}
