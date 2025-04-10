@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Dialog,
@@ -121,105 +120,114 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
     onClose();
   };
 
-  const renderStep1 = () => (
-    <>
-      <div className="mt-8 pt-8 border-t">
-        <h3 className="font-medium text-xl mb-3">
-          {selectedWorkflowType === 'future' 
-            ? 'Repurpose future content' 
-            : selectedWorkflowType === 'existing' 
-            ? 'Repurpose existing content'
-            : 'Repurpose one content in multiple destinations'}
-        </h3>
-        <p className="text-gray-600 mb-6">
-          {selectedWorkflowType === 'future' 
-            ? 'Whenever you upload new content to your Source platform, it will be automatically published to your Destination within 2 hours.'
-            : selectedWorkflowType === 'existing' 
-            ? 'Automatically schedule and publish your existing content from your Source platform to your Destination up to 5 times per day.'
-            : 'Select one source and add multiple destinations to repurpose your content across various platforms.'}
-        </p>
+  const renderMultipleDestinations = () => (
+    <div>
+      <h3 className="font-medium text-xl mb-3">
+        Repurpose one content in multiple destinations
+      </h3>
+      <p className="text-gray-600 mb-6">
+        Select destinations to repurpose your content across various platforms.
+      </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <h4 className="font-medium mb-3">Source (choose one)</h4>
-            <div className="space-y-2">
-              {platforms.sources.map((platform) => (
+      <div>
+        <h4 className="font-medium mb-3">Destinations</h4>
+        {selectedDestinations.length > 0 ? (
+          <div className="space-y-2 mb-4">
+            {selectedDestinations.map((destId, index) => {
+              const destination = platforms.destinations.find(d => d.id === destId);
+              return (
+                <div key={`${destId}-${index}`} className="p-3 border rounded-md flex items-center justify-between">
+                  <div className="flex items-center">
+                    <img src={destination?.icon} 
+                          alt={destination?.name} className="h-6 w-6 mr-2" />
+                    <span>{destination?.name}</span>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-gray-500 hover:text-red-500"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveDestination(index);
+                    }}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
+
+        {showDestinationSelector ? (
+          <div className="space-y-2">
+            <h5 className="text-sm font-medium">Select a destination to add:</h5>
+            {platforms.destinations
+              .filter(d => !selectedDestinations.includes(d.id))
+              .map((platform) => (
                 <div 
                   key={platform.id}
-                  onClick={() => handleSourceSelection(platform.id)}
-                  className={`p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer ${
-                    selectedSource === platform.id ? 'border-primary bg-primary/5' : ''
-                  }`}
+                  onClick={() => handleDestinationSelection(platform.id)}
+                  className="p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer"
                 >
                   <img src={platform.icon} 
-                       alt={platform.name} className="h-6 w-6 mr-2" />
+                        alt={platform.name} className="h-6 w-6 mr-2" />
                   <span>{platform.name}</span>
                 </div>
               ))}
-            </div>
           </div>
+        ) : (
+          <Button 
+            variant="outline" 
+            className={`w-full ${selectedDestinations.length > 0 ? 'mt-4' : ''} flex items-center justify-center`}
+            onClick={handleAddDestination}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            {selectedDestinations.length > 0 ? 'Add More Destination' : 'Add Destination'}
+          </Button>
+        )}
+      </div>
+    </div>
+  );
 
-          <div>
-            {selectedWorkflowType === 'multiple' ? (
+  const renderStep1 = () => (
+    <>
+      <div className="mt-8 pt-8 border-t">
+        {selectedWorkflowType === 'multiple' ? (
+          renderMultipleDestinations()
+        ) : (
+          <>
+            <h3 className="font-medium text-xl mb-3">
+              {selectedWorkflowType === 'future' 
+                ? 'Repurpose future content' 
+                : 'Repurpose existing content'}
+            </h3>
+            <p className="text-gray-600 mb-6">
+              {selectedWorkflowType === 'future' 
+                ? 'Whenever you upload new content to your Source platform, it will be automatically published to your Destination within 2 hours.'
+                : 'Automatically schedule and publish your existing content from your Source platform to your Destination up to 5 times per day.'}
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h4 className="font-medium mb-3">Destinations</h4>
-                {selectedDestinations.length > 0 ? (
-                  <div className="space-y-2 mb-4">
-                    {selectedDestinations.map((destId, index) => {
-                      const destination = platforms.destinations.find(d => d.id === destId);
-                      return (
-                        <div key={`${destId}-${index}`} className="p-3 border rounded-md flex items-center justify-between">
-                          <div className="flex items-center">
-                            <img src={destination?.icon} 
-                                 alt={destination?.name} className="h-6 w-6 mr-2" />
-                            <span>{destination?.name}</span>
-                          </div>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="text-gray-500 hover:text-red-500"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleRemoveDestination(index);
-                            }}
-                          >
-                            Remove
-                          </Button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : null}
-
-                {showDestinationSelector ? (
-                  <div className="space-y-2">
-                    <h5 className="text-sm font-medium">Select a destination to add:</h5>
-                    {platforms.destinations
-                      .filter(d => !selectedDestinations.includes(d.id))
-                      .map((platform) => (
-                        <div 
-                          key={platform.id}
-                          onClick={() => handleDestinationSelection(platform.id)}
-                          className="p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer"
-                        >
-                          <img src={platform.icon} 
-                               alt={platform.name} className="h-6 w-6 mr-2" />
-                          <span>{platform.name}</span>
-                        </div>
-                      ))}
-                  </div>
-                ) : (
-                  <Button 
-                    variant="outline" 
-                    className={`w-full ${selectedDestinations.length > 0 ? 'mt-4' : ''} flex items-center justify-center`}
-                    onClick={handleAddDestination}
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    {selectedDestinations.length > 0 ? 'Add More Destination' : 'Add Destination'}
-                  </Button>
-                )}
+                <h4 className="font-medium mb-3">Source (choose one)</h4>
+                <div className="space-y-2">
+                  {platforms.sources.map((platform) => (
+                    <div 
+                      key={platform.id}
+                      onClick={() => handleSourceSelection(platform.id)}
+                      className={`p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer ${
+                        selectedSource === platform.id ? 'border-primary bg-primary/5' : ''
+                      }`}
+                    >
+                      <img src={platform.icon} 
+                           alt={platform.name} className="h-6 w-6 mr-2" />
+                      <span>{platform.name}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ) : (
+
               <div>
                 <h4 className="font-medium mb-3">Destination (choose one)</h4>
                 <div className="space-y-2">
@@ -238,9 +246,9 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
                   ))}
                 </div>
               </div>
-            )}
-          </div>
-        </div>
+            </div>
+          </>
+        )}
       </div>
 
       <DialogFooter className="mt-8 flex justify-between items-center">
@@ -264,7 +272,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
             <Button 
               className="bg-pink-500 hover:bg-pink-600 text-white"
               onClick={handleNext}
-              disabled={!selectedSource || selectedDestinations.length === 0}
+              disabled={selectedDestinations.length === 0}
             >
               Next
             </Button>
