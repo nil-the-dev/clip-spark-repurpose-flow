@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 
@@ -10,6 +10,13 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user, isLoading } = useAuth();
   const location = useLocation();
+
+  // Store the current path in localStorage when it changes
+  useEffect(() => {
+    if (user && location.pathname !== '/auth') {
+      localStorage.setItem('lastPath', location.pathname);
+    }
+  }, [location.pathname, user]);
 
   // Show loading indicator while checking authentication
   if (isLoading) {

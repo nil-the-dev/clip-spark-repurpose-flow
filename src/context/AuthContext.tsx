@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Session, User } from '@supabase/supabase-js';
@@ -32,8 +33,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         // Only redirect on explicit sign in events, not on page reload
         if (currentSession?.user && event === 'SIGNED_IN') {
-          // Get the intended destination from the location state, or default to dashboard
-          const from = location.state?.from?.pathname || '/dashboard';
+          // Get the intended destination from localStorage, location state, or default to dashboard
+          const savedPath = localStorage.getItem('lastPath');
+          const from = location.state?.from?.pathname || savedPath || '/dashboard';
           setTimeout(() => navigate(from, { replace: true }), 0);
         }
       }
