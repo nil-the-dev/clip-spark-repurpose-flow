@@ -11,6 +11,7 @@ import {
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Logo from './Logo';
+import ThemeToggle from './ThemeToggle';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,7 +21,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="fixed top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-gray-200">
+    <nav className="fixed top-0 z-50 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center">
@@ -29,20 +30,21 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/dashboard" className="text-gray-700 hover:text-primary transition-colors">
+            <Link to="/dashboard" className="text-gray-700 dark:text-gray-300 hover:text-primary transition-colors">
               Dashboard
             </Link>
-            <Link to="/workflow" className="text-gray-700 hover:text-primary transition-colors">
+            <Link to="/workflow" className="text-gray-700 dark:text-gray-300 hover:text-primary transition-colors">
               Workflows
             </Link>
-            <Link to="/connections" className="text-gray-700 hover:text-primary transition-colors">
+            <Link to="/connections" className="text-gray-700 dark:text-gray-300 hover:text-primary transition-colors">
               Connections
             </Link>
-            <Link to="/pricing" className="text-gray-700 hover:text-primary transition-colors">
+            <Link to="/pricing" className="text-gray-700 dark:text-gray-300 hover:text-primary transition-colors">
               Pricing
             </Link>
 
             <div className="flex items-center space-x-3">
+              <ThemeToggle />
               <Button variant="outline" asChild>
                 <Link to="/auth">Log In</Link>
               </Button>
@@ -53,10 +55,11 @@ const Navbar = () => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center space-x-3">
+            <ThemeToggle />
             <button
               onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-primary focus:outline-none"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-primary focus:outline-none"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -66,34 +69,34 @@ const Navbar = () => {
 
       {/* Mobile Navigation */}
       <div className={cn(
-        "md:hidden fixed inset-0 top-16 bg-white z-40 transform transition-transform duration-300 ease-in-out",
+        "md:hidden fixed inset-0 top-16 bg-white dark:bg-gray-800 z-40 transform transition-transform duration-300 ease-in-out",
         isMenuOpen ? "translate-x-0" : "translate-x-full"
       )}>
         <div className="px-4 pt-2 pb-5 space-y-4">
           <Link 
             to="/dashboard" 
-            className="block py-3 px-4 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+            className="block py-3 px-4 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
             onClick={() => setIsMenuOpen(false)}
           >
             Dashboard
           </Link>
           <Link 
             to="/workflow" 
-            className="block py-3 px-4 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+            className="block py-3 px-4 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
             onClick={() => setIsMenuOpen(false)}
           >
             Workflows
           </Link>
           <Link 
             to="/connections" 
-            className="block py-3 px-4 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+            className="block py-3 px-4 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
             onClick={() => setIsMenuOpen(false)}
           >
             Connections
           </Link>
           <Link 
             to="/pricing" 
-            className="block py-3 px-4 text-base font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+            className="block py-3 px-4 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
             onClick={() => setIsMenuOpen(false)}
           >
             Pricing

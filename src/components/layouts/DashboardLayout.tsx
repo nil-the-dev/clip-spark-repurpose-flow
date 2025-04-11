@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Logo from '@/components/Logo';
 import UserMenu from '@/components/UserMenu';
+import ThemeToggle from '@/components/ThemeToggle';
 import { 
   SidebarProvider, 
   Sidebar, 
@@ -60,7 +61,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="min-h-screen flex w-full bg-gray-50">
+      <div className="min-h-screen flex w-full bg-gray-50 dark:bg-gray-900">
         <Sidebar>
           <SidebarHeader className="p-4">
             <Logo />
@@ -69,7 +70,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <SidebarMenu>
               {navigationItems.map((item) => {
                 if (item.type === 'divider') {
-                  return <div key={item.id} className="my-2 mx-3 h-[1px] bg-gray-200" />;
+                  return <div key={item.id} className="my-2 mx-3 h-[1px] bg-gray-200 dark:bg-gray-700" />;
                 }
                 
                 const Icon = item.icon;
@@ -95,7 +96,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </Sidebar>
         
         <main className="flex-1 overflow-x-hidden">
-          <div className="border-b border-gray-200 bg-white p-4 flex justify-end">
+          <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 flex justify-end items-center space-x-4">
+            <ThemeToggle />
             <UserMenu />
           </div>
           {children}
