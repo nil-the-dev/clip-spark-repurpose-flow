@@ -1,10 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Play, Upload, Link } from 'lucide-react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
+import CreateWorkflowDialog from '@/components/workflow/CreateWorkflowDialog';
 
 const Dashboard = () => {
+  const [isWorkflowDialogOpen, setIsWorkflowDialogOpen] = useState(false);
+
+  const handleOpenWorkflowDialog = () => {
+    setIsWorkflowDialogOpen(true);
+  };
+
+  const handleCloseWorkflowDialog = () => {
+    setIsWorkflowDialogOpen(false);
+  };
+
   return (
     <DashboardLayout>
       <div className="p-6">
@@ -15,12 +26,20 @@ const Dashboard = () => {
               <Upload className="mr-2 h-4 w-4" />
               Upload Content
             </Button>
-            <Button className="gradient-bg flex items-center">
+            <Button 
+              className="gradient-bg flex items-center"
+              onClick={handleOpenWorkflowDialog}
+            >
               <PlusCircle className="mr-2 h-4 w-4" />
               Create Workflow
             </Button>
           </div>
         </div>
+        
+        <CreateWorkflowDialog 
+          isOpen={isWorkflowDialogOpen} 
+          onClose={handleCloseWorkflowDialog} 
+        />
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
