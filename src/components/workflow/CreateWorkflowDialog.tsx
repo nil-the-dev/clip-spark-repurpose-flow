@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useRef } from 'react';
 import { 
   Dialog,
   DialogContent,
@@ -8,9 +9,11 @@ import {
   DialogFooter
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Plus, Repeat, ListVideo, Share2, Upload, FileUp } from 'lucide-react';
+import { Plus, Repeat, ListVideo, Share2, Upload, FileUp, ArrowLeft } from 'lucide-react';
 import { Form, FormField, FormItem, FormLabel, FormControl } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
+import { useToast } from '@/hooks/use-toast';
 
 interface CreateWorkflowDialogProps {
   isOpen: boolean;
@@ -28,6 +31,10 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
   const [selectedDestinations, setSelectedDestinations] = useState<string[]>([]);
   const [showDestinationSelector, setShowDestinationSelector] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const dropAreaRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
   
   const form = useForm({
     defaultValues: {
@@ -111,13 +118,74 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
     }
   };
 
+  const handleBack = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    } else {
+      setSelectedWorkflowType(null);
+    }
+  };
+
   const handleClose = () => {
     setSelectedWorkflowType(null);
     setSelectedSource(null);
     setSelectedDestinations([]);
     setShowDestinationSelector(false);
     setCurrentStep(1);
+    setUploadedFile(null);
+    form.reset();
     onClose();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setUploadedFile(e.target.files[0]);
+      toast({
+        title: "File uploaded",
+        description: `${e.target.files[0].name} has been successfully uploaded.`,
+      });
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (dropAreaRef.current) {
+      dropAreaRef.current.classList.add('border-primary');
+      dropAreaRef.current.classList.add('bg-primary/5');
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (dropAreaRef.current) {
+      dropAreaRef.current.classList.remove('border-primary');
+      dropAreaRef.current.classList.remove('bg-primary/5');
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (dropAreaRef.current) {
+      dropAreaRef.current.classList.remove('border-primary');
+      dropAreaRef.current.classList.remove('bg-primary/5');
+    }
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setUploadedFile(e.dataTransfer.files[0]);
+      toast({
+        title: "File uploaded",
+        description: `${e.dataTransfer.files[0].name} has been successfully uploaded.`,
+      });
+    }
+  };
+
+  const handleClickUpload = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   const renderMultipleDestinations = () => (
@@ -192,7 +260,23 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
 
   const renderStep1 = () => (
     <>
-      <div className="mt-8 pt-8 border-t">
+      <div className="mt-4 pt-4 border-t">
+        <div className="flex flex-wrap gap-3 mb-6">
+          {workflowTypes.map((type) => (
+            <button
+              key={type.id}
+              onClick={() => handleSelection(type.id)}
+              className={`px-3 py-2 rounded-lg flex items-center transition-all ${
+                selectedWorkflowType === type.id
+                  ? 'bg-primary/10 text-primary-foreground'
+                  : 'bg-gray-100 hover:bg-gray-200'
+              }`}
+            >
+              {type.name}
+            </button>
+          ))}
+        </div>
+
         {selectedWorkflowType === 'multiple' ? (
           renderMultipleDestinations()
         ) : (
@@ -255,9 +339,10 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
         {selectedWorkflowType && (
           <Button 
             variant="outline" 
-            onClick={() => setSelectedWorkflowType(null)}
+            onClick={handleBack}
             className="mr-auto"
           >
+            <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </Button>
         )}
@@ -290,7 +375,23 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
   );
 
   const renderStep2 = () => (
-    <div className="mt-8 pt-8 border-t">
+    <div className="mt-4 pt-4 border-t">
+      <div className="flex flex-wrap gap-3 mb-6">
+        {workflowTypes.map((type) => (
+          <button
+            key={type.id}
+            onClick={() => handleSelection(type.id)}
+            className={`px-3 py-2 rounded-lg flex items-center transition-all ${
+              selectedWorkflowType === type.id
+                ? 'bg-primary/10 text-primary-foreground'
+                : 'bg-gray-100 hover:bg-gray-200'
+            }`}
+          >
+            {type.name}
+          </button>
+        ))}
+      </div>
+      
       <h3 className="font-medium text-xl mb-3">Content Details</h3>
       <p className="text-gray-600 mb-6">
         Upload your content and provide details for it to be repurposed across your selected destinations.
@@ -298,18 +399,57 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
 
       <Form {...form}>
         <div className="space-y-6">
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-            <FileUp className="mx-auto h-12 w-12 text-gray-400" />
-            <div className="mt-2">
-              <label htmlFor="file-upload" className="cursor-pointer">
-                <span className="text-primary font-medium">Click to upload</span>
-                <span className="text-gray-500"> or drag and drop</span>
-                <input id="file-upload" name="file-upload" type="file" className="sr-only" />
-              </label>
-            </div>
-            <p className="text-sm text-gray-500 mt-1">
-              Videos, images or other content files
-            </p>
+          <div 
+            ref={dropAreaRef}
+            className={`border-2 border-dashed border-gray-300 rounded-lg p-6 text-center transition-colors ${
+              uploadedFile ? 'bg-green-50 border-green-300' : ''
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={handleClickUpload}
+          >
+            {uploadedFile ? (
+              <div className="flex flex-col items-center">
+                <FileUp className="h-12 w-12 text-green-500" />
+                <p className="mt-2 font-medium text-green-600">{uploadedFile.name}</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
+                </p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-3" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setUploadedFile(null);
+                  }}
+                >
+                  Change File
+                </Button>
+              </div>
+            ) : (
+              <>
+                <FileUp className="mx-auto h-12 w-12 text-gray-400" />
+                <div className="mt-2">
+                  <label htmlFor="file-upload" className="cursor-pointer">
+                    <span className="text-primary font-medium">Click to upload</span>
+                    <span className="text-gray-500"> or drag and drop</span>
+                    <input 
+                      ref={fileInputRef}
+                      id="file-upload" 
+                      name="file-upload" 
+                      type="file" 
+                      className="sr-only" 
+                      onChange={handleFileChange}
+                    />
+                  </label>
+                </div>
+                <p className="text-sm text-gray-500 mt-1">
+                  Videos, images or other content files
+                </p>
+              </>
+            )}
           </div>
           
           <FormField
@@ -319,8 +459,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
               <FormItem>
                 <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <input
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                  <Input
                     placeholder="Enter a title for your content"
                     {...field}
                   />
@@ -352,9 +491,10 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
       <DialogFooter className="mt-8 flex justify-between items-center">
         <Button 
           variant="outline" 
-          onClick={() => setCurrentStep(1)}
+          onClick={handleBack}
           className="mr-auto"
         >
+          <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
         <Button 
@@ -373,8 +513,8 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="mb-6">
-          {isFirstWorkflow && (
+        <DialogHeader className="mb-2">
+          {isFirstWorkflow && !selectedWorkflowType && (
             <div className="mb-4">
               <DialogTitle className="text-2xl">Create your first workflow</DialogTitle>
               <DialogDescription className="text-base mt-1">
@@ -382,7 +522,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
               </DialogDescription>
             </div>
           )}
-          {currentStep === 1 && (
+          {!selectedWorkflowType && (
             <h3 className="text-xl font-semibold">Choose a workflow type</h3>
           )}
         </DialogHeader>
