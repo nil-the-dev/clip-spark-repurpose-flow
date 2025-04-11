@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { 
   Dialog,
@@ -268,8 +267,8 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
               onClick={() => handleSelection(type.id)}
               className={`px-3 py-2 rounded-lg flex items-center transition-all ${
                 selectedWorkflowType === type.id
-                  ? 'bg-primary/10 text-primary-foreground'
-                  : 'bg-gray-100 hover:bg-gray-200'
+                  ? 'bg-purple-600 text-white font-medium'
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
               }`}
             >
               {type.name}
@@ -301,7 +300,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
                       key={platform.id}
                       onClick={() => handleSourceSelection(platform.id)}
                       className={`p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer ${
-                        selectedSource === platform.id ? 'border-primary bg-primary/5' : ''
+                        selectedSource === platform.id ? 'border-purple-500 bg-purple-50' : ''
                       }`}
                     >
                       <img src={platform.icon} 
@@ -320,7 +319,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
                       key={platform.id}
                       onClick={() => handleDestinationSelection(platform.id)}
                       className={`p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer ${
-                        selectedDestinations[0] === platform.id ? 'border-primary bg-primary/5' : ''
+                        selectedDestinations[0] === platform.id ? 'border-purple-500 bg-purple-50' : ''
                       }`}
                     >
                       <img src={platform.icon} 
@@ -383,8 +382,8 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
             onClick={() => handleSelection(type.id)}
             className={`px-3 py-2 rounded-lg flex items-center transition-all ${
               selectedWorkflowType === type.id
-                ? 'bg-primary/10 text-primary-foreground'
-                : 'bg-gray-100 hover:bg-gray-200'
+                ? 'bg-purple-600 text-white font-medium'
+                : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
             }`}
           >
             {type.name}
@@ -535,7 +534,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
                 onClick={() => handleSelection(type.id)}
                 className={`p-4 rounded-lg border cursor-pointer transition-all ${
                   selectedWorkflowType === type.id
-                    ? 'border-primary bg-primary/5'
+                    ? 'border-purple-500 bg-purple-50'
                     : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                 }`}
               >

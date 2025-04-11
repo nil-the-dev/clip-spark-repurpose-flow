@@ -2,14 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Clock, ArrowRight, Play, Pause, Sun, Moon } from 'lucide-react';
+import { Plus, Clock, ArrowRight, Play, Pause } from 'lucide-react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import CreateWorkflowDialog from '@/components/workflow/CreateWorkflowDialog';
-import { ThemeSwitch } from '@/components/ui/switch';
 
 const Workflow = () => {
   const [isWorkflowDialogOpen, setIsWorkflowDialogOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [activeWorkflows, setActiveWorkflows] = useState([
     {
       name: "YouTube to Short-Form",
@@ -60,31 +58,6 @@ const Workflow = () => {
     },
   ];
 
-  useEffect(() => {
-    // Check if user has a theme preference saved
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-      setIsDarkMode(true);
-      document.documentElement.classList.add('dark');
-    } else {
-      setIsDarkMode(false);
-      document.documentElement.classList.remove('dark');
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    if (isDarkMode) {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    } else {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    }
-    setIsDarkMode(!isDarkMode);
-  };
-
   const openWorkflowDialog = () => {
     setIsWorkflowDialogOpen(true);
   };
@@ -95,14 +68,6 @@ const Workflow = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Workflow Management</h1>
           <div className="flex items-center gap-4">
-            <div className="flex items-center space-x-2">
-              <Sun className="h-4 w-4 text-yellow-500" />
-              <ThemeSwitch 
-                checked={isDarkMode} 
-                onCheckedChange={toggleTheme} 
-              />
-              <Moon className="h-4 w-4 text-blue-700" />
-            </div>
             <Button className="gradient-bg flex items-center" onClick={openWorkflowDialog}>
               <Plus className="mr-2 h-4 w-4" />
               Create New Workflow
