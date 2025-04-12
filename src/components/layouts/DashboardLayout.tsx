@@ -1,9 +1,8 @@
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Logo from '@/components/Logo';
 import UserMenu from '@/components/UserMenu';
-import ThemeToggle from '@/components/ThemeToggle';
 import { 
   SidebarProvider, 
   Sidebar, 
@@ -97,7 +96,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         
         <main className="flex-1 overflow-x-hidden">
           <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 flex justify-end items-center space-x-4">
-            <ThemeToggle />
             <UserMenu />
           </div>
           {children}
@@ -106,3 +104,4 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     </SidebarProvider>
   );
 }
+
