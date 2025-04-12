@@ -300,7 +300,9 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
                       key={platform.id}
                       onClick={() => handleSourceSelection(platform.id)}
                       className={`p-3 border rounded-md flex items-center hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer dark:border-gray-700 transition-colors ${
-                        selectedSource === platform.id ? 'border-primary/70 bg-primary/5 dark:border-primary/70 dark:bg-primary/10' : ''
+                        selectedSource === platform.id 
+                          ? 'border-primary dark:border-white/30 bg-primary/5 dark:bg-white/5' 
+                          : 'border-gray-200 dark:border-gray-700'
                       }`}
                     >
                       <img src={platform.icon} 
@@ -319,7 +321,9 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
                       key={platform.id}
                       onClick={() => handleDestinationSelection(platform.id)}
                       className={`p-3 border rounded-md flex items-center hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer dark:border-gray-700 transition-colors ${
-                        selectedDestinations[0] === platform.id ? 'border-primary/70 bg-primary/5 dark:border-primary/70 dark:bg-primary/10' : ''
+                        selectedDestinations[0] === platform.id 
+                          ? 'border-primary dark:border-white/30 bg-primary/5 dark:bg-white/5' 
+                          : 'border-gray-200 dark:border-gray-700'
                       }`}
                     >
                       <img src={platform.icon} 
