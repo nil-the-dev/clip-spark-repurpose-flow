@@ -2,19 +2,25 @@
 import React from 'react';
 import { useTheme } from '@/context/ThemeContext';
 import { Sun, Moon } from 'lucide-react';
-import { ThemeSwitch } from '@/components/ui/switch';
+import { Button } from '@/components/ui/button';
 
 const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
   
   return (
-    <div className="flex items-center gap-2">
-      <ThemeSwitch 
-        checked={theme === 'dark'}
-        onCheckedChange={toggleTheme}
-        aria-label="Toggle theme"
-      />
-    </div>
+    <Button 
+      variant="ghost" 
+      size="icon" 
+      onClick={toggleTheme}
+      className="rounded-full w-8 h-8 p-0 transition-colors"
+      aria-label="Toggle theme"
+    >
+      {theme === 'dark' ? (
+        <Sun className="h-4 w-4 text-yellow-400" />
+      ) : (
+        <Moon className="h-4 w-4 text-purple-600" />
+      )}
+    </Button>
   );
 };
 

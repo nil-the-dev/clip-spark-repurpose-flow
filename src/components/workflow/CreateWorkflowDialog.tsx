@@ -192,7 +192,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
       <h3 className="font-medium text-xl mb-3">
         Repurpose one content in multiple destinations
       </h3>
-      <p className="text-gray-600 mb-6">
+      <p className="text-gray-600 dark:text-gray-300 mb-6">
         Select destinations to repurpose your content across various platforms.
       </p>
 
@@ -203,7 +203,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
             {selectedDestinations.map((destId, index) => {
               const destination = platforms.destinations.find(d => d.id === destId);
               return (
-                <div key={`${destId}-${index}`} className="p-3 border rounded-md flex items-center justify-between">
+                <div key={`${destId}-${index}`} className="p-3 border rounded-md flex items-center justify-between dark:border-gray-700">
                   <div className="flex items-center">
                     <img src={destination?.icon} 
                           alt={destination?.name} className="h-6 w-6 mr-2" />
@@ -212,7 +212,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="text-gray-500 hover:text-red-500"
+                    className="text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleRemoveDestination(index);
@@ -235,7 +235,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
                 <div 
                   key={platform.id}
                   onClick={() => handleDestinationSelection(platform.id)}
-                  className="p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer"
+                  className="p-3 border rounded-md flex items-center hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer dark:border-gray-700"
                 >
                   <img src={platform.icon} 
                         alt={platform.name} className="h-6 w-6 mr-2" />
@@ -259,7 +259,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
 
   const renderStep1 = () => (
     <>
-      <div className="mt-4 pt-4 border-t">
+      <div className="mt-4 pt-4 border-t dark:border-gray-700">
         <div className="flex flex-wrap gap-3 mb-6">
           {workflowTypes.map((type) => (
             <button
@@ -267,8 +267,8 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
               onClick={() => handleSelection(type.id)}
               className={`px-3 py-2 rounded-lg flex items-center transition-all ${
                 selectedWorkflowType === type.id
-                  ? 'bg-purple-600 text-white font-medium'
-                  : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                  ? 'bg-primary text-primary-foreground dark:bg-primary dark:text-primary-foreground font-medium'
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700'
               }`}
             >
               {type.name}
@@ -285,7 +285,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
                 ? 'Repurpose future content' 
                 : 'Repurpose existing content'}
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
               {selectedWorkflowType === 'future' 
                 ? 'Whenever you upload new content to your Source platform, it will be automatically published to your Destination within 2 hours.'
                 : 'Automatically schedule and publish your existing content from your Source platform to your Destination up to 5 times per day.'}
@@ -299,8 +299,8 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
                     <div 
                       key={platform.id}
                       onClick={() => handleSourceSelection(platform.id)}
-                      className={`p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer ${
-                        selectedSource === platform.id ? 'border-purple-500 bg-purple-50' : ''
+                      className={`p-3 border rounded-md flex items-center hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer dark:border-gray-700 transition-colors ${
+                        selectedSource === platform.id ? 'border-primary/70 bg-primary/5 dark:border-primary/70 dark:bg-primary/10' : ''
                       }`}
                     >
                       <img src={platform.icon} 
@@ -318,8 +318,8 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
                     <div 
                       key={platform.id}
                       onClick={() => handleDestinationSelection(platform.id)}
-                      className={`p-3 border rounded-md flex items-center hover:bg-gray-50 cursor-pointer ${
-                        selectedDestinations[0] === platform.id ? 'border-purple-500 bg-purple-50' : ''
+                      className={`p-3 border rounded-md flex items-center hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer dark:border-gray-700 transition-colors ${
+                        selectedDestinations[0] === platform.id ? 'border-primary/70 bg-primary/5 dark:border-primary/70 dark:bg-primary/10' : ''
                       }`}
                     >
                       <img src={platform.icon} 
@@ -354,7 +354,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
         {selectedWorkflowType && (
           selectedWorkflowType === 'multiple' ? (
             <Button 
-              className="bg-pink-500 hover:bg-pink-600 text-white"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
               onClick={handleNext}
               disabled={selectedDestinations.length === 0}
             >
@@ -362,7 +362,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
             </Button>
           ) : (
             <Button 
-              className="bg-pink-500 hover:bg-pink-600 text-white" 
+              className="bg-primary hover:bg-primary/90 text-primary-foreground" 
               disabled={!selectedSource || selectedDestinations.length === 0}
             >
               Create Workflow
@@ -374,7 +374,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
   );
 
   const renderStep2 = () => (
-    <div className="mt-4 pt-4 border-t">
+    <div className="mt-4 pt-4 border-t dark:border-gray-700">
       <div className="flex flex-wrap gap-3 mb-6">
         {workflowTypes.map((type) => (
           <button
@@ -382,8 +382,8 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
             onClick={() => handleSelection(type.id)}
             className={`px-3 py-2 rounded-lg flex items-center transition-all ${
               selectedWorkflowType === type.id
-                ? 'bg-purple-600 text-white font-medium'
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                ? 'bg-primary text-primary-foreground dark:bg-primary dark:text-primary-foreground font-medium'
+                : 'bg-gray-100 hover:bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700'
             }`}
           >
             {type.name}
@@ -392,7 +392,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
       </div>
       
       <h3 className="font-medium text-xl mb-3">Content Details</h3>
-      <p className="text-gray-600 mb-6">
+      <p className="text-gray-600 dark:text-gray-300 mb-6">
         Upload your content and provide details for it to be repurposed across your selected destinations.
       </p>
 
@@ -400,8 +400,8 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
         <div className="space-y-6">
           <div 
             ref={dropAreaRef}
-            className={`border-2 border-dashed border-gray-300 rounded-lg p-6 text-center transition-colors ${
-              uploadedFile ? 'bg-green-50 border-green-300' : ''
+            className={`border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center transition-colors ${
+              uploadedFile ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700' : ''
             }`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -410,9 +410,9 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
           >
             {uploadedFile ? (
               <div className="flex flex-col items-center">
-                <FileUp className="h-12 w-12 text-green-500" />
-                <p className="mt-2 font-medium text-green-600">{uploadedFile.name}</p>
-                <p className="text-sm text-gray-500 mt-1">
+                <FileUp className="h-12 w-12 text-green-500 dark:text-green-400" />
+                <p className="mt-2 font-medium text-green-600 dark:text-green-400">{uploadedFile.name}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
                 </p>
                 <Button 
@@ -433,7 +433,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
                 <div className="mt-2">
                   <label htmlFor="file-upload" className="cursor-pointer">
                     <span className="text-primary font-medium">Click to upload</span>
-                    <span className="text-gray-500"> or drag and drop</span>
+                    <span className="text-gray-500 dark:text-gray-400"> or drag and drop</span>
                     <input 
                       ref={fileInputRef}
                       id="file-upload" 
@@ -444,7 +444,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
                     />
                   </label>
                 </div>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   Videos, images or other content files
                 </p>
               </>
@@ -475,7 +475,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
                 <FormLabel>Description</FormLabel>
                 <FormControl>
                   <textarea
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-background text-foreground"
                     rows={4}
                     placeholder="Enter a description for your content"
                     {...field}
@@ -502,7 +502,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
         >
           Cancel
         </Button>
-        <Button className="bg-pink-500 hover:bg-pink-600 text-white">
+        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
           Create Workflow
         </Button>
       </DialogFooter>
@@ -534,12 +534,12 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
                 onClick={() => handleSelection(type.id)}
                 className={`p-4 rounded-lg border cursor-pointer transition-all ${
                   selectedWorkflowType === type.id
-                    ? 'border-purple-500 bg-purple-50'
-                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    ? 'border-primary/70 bg-primary/5 dark:border-primary/70 dark:bg-primary/10'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800'
                 }`}
               >
                 <div className="flex items-center">
-                  <div className="h-10 w-10 flex items-center justify-center border border-gray-200 rounded-md bg-gray-50 mr-3">
+                  <div className="h-10 w-10 flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-800 mr-3">
                     {type.icon}
                   </div>
                   <span className="font-medium">{type.name}</span>

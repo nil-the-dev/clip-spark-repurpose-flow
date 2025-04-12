@@ -101,10 +101,33 @@
   }
 
   .gradient-bg {
-    @apply bg-gradient-to-r from-brand-purple to-brand-blue;
+    @apply bg-gradient-to-r from-brand-purple to-brand-blue hover:from-brand-purple/90 hover:to-brand-blue/90 text-white transition-colors;
   }
 
   .glass-card {
     @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-white/20 dark:border-gray-700/20 shadow-md rounded-xl;
   }
+
+  /* Theme transition */
+  .theme-transition {
+    @apply transition-colors duration-200;
+  }
+}
+
+/* Add smooth transitions when switching themes */
+html.dark {
+  color-scheme: dark;
+}
+
+html.light {
+  color-scheme: light;
+}
+
+html {
+  transition: background-color 0.3s ease;
+}
+
+/* Better focus styles for accessibility */
+:focus-visible {
+  @apply outline-none ring-2 ring-primary ring-offset-2;
 }

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, Clock, ArrowRight, Play, Pause } from 'lucide-react';
@@ -79,12 +79,12 @@ const Workflow = () => {
           <h2 className="text-xl font-semibold mb-4">Workflow Templates</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {workflowTemplates.map((template, index) => (
-              <Card key={index} className="hover:shadow-md transition-shadow">
+              <Card key={index} className="hover:shadow-md transition-shadow dark:hover:shadow-gray-700">
                 <CardContent className="p-6">
                   <div className="text-4xl mb-3">{template.icon}</div>
                   <h3 className="font-medium text-lg mb-2">{template.title}</h3>
-                  <p className="text-gray-500 mb-4">{template.description}</p>
-                  <Button variant="outline" className="w-full flex items-center justify-center">
+                  <p className="text-gray-500 dark:text-gray-400 mb-4">{template.description}</p>
+                  <Button variant="outline" className="w-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700">
                     Use Template
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -98,33 +98,33 @@ const Workflow = () => {
           <h2 className="text-xl font-semibold mb-4">Active Workflows</h2>
           <div className="grid grid-cols-1 gap-4">
             {activeWorkflows.map((workflow, index) => (
-              <Card key={index} className="border-gray-200">
+              <Card key={index} className="border-gray-200 dark:border-gray-700 hover:border-primary/50 dark:hover:border-primary/50 transition-colors">
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                     <div>
                       <h3 className="text-lg font-medium mb-1">{workflow.name}</h3>
-                      <p className="text-gray-500 mb-2">{workflow.description}</p>
-                      <div className="flex items-center space-x-1 text-xs mb-2">
+                      <p className="text-gray-500 dark:text-gray-400 mb-2">{workflow.description}</p>
+                      <div className="flex flex-wrap items-center gap-1 text-xs mb-2">
                         {workflow.platforms.map((platform, i) => (
-                          <span key={i} className="px-2 py-1 bg-gray-100 rounded-full">{platform}</span>
+                          <span key={i} className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-full">{platform}</span>
                         ))}
                       </div>
-                      <div className="flex items-center text-xs text-gray-500">
+                      <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                         <Clock className="h-3 w-3 mr-1" />
                         <span>Last run: {workflow.lastRun} | Next run: {workflow.nextRun}</span>
                       </div>
                     </div>
                     <div className="flex items-center mt-4 md:mt-0">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        workflow.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                        workflow.status === 'Active' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
                       }`}>
                         {workflow.status}
                       </span>
-                      <Button variant="ghost" size="sm" className="ml-4">Edit</Button>
-                      <Button variant="ghost" size="sm" className="ml-2">
+                      <Button variant="ghost" size="sm" className="ml-4 hover:bg-gray-100 dark:hover:bg-gray-800">Edit</Button>
+                      <Button variant="ghost" size="sm" className="ml-2 hover:text-primary dark:hover:text-primary">
                         {workflow.status === 'Active' ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                       </Button>
-                      <Button variant="ghost" size="sm" className="ml-2">Run Now</Button>
+                      <Button variant="ghost" size="sm" className="ml-2 hover:bg-gray-100 dark:hover:bg-gray-800">Run Now</Button>
                     </div>
                   </div>
                 </CardContent>

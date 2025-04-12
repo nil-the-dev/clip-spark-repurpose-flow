@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -15,6 +15,8 @@ import ThemeToggle from './ThemeToggle';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  const isWorkflowPage = location.pathname === '/workflow';
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -44,7 +46,7 @@ const Navbar = () => {
             </Link>
 
             <div className="flex items-center space-x-3">
-              <ThemeToggle />
+              {!isWorkflowPage && <ThemeToggle />}
               <Button variant="outline" asChild>
                 <Link to="/auth">Log In</Link>
               </Button>
@@ -56,7 +58,7 @@ const Navbar = () => {
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-3">
-            <ThemeToggle />
+            {!isWorkflowPage && <ThemeToggle />}
             <button
               onClick={toggleMenu}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-primary focus:outline-none"
