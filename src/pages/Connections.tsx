@@ -9,11 +9,11 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
 
 const ConnectionCard = ({ platform, icon, onClick }: { platform: string, icon: string, onClick: () => void }) => (
   <div 
-    className="flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+    className="flex flex-col items-center justify-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
     onClick={onClick}
   >
     <img src={icon} alt={platform} className="w-12 h-12 mb-2" />
-    <span className="text-sm font-medium">{platform}</span>
+    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{platform}</span>
   </div>
 );
 
@@ -40,7 +40,7 @@ export default function Connections() {
           <div className="flex items-center">
             <LinkIcon className="h-6 w-6 mr-2" />
             <h1 className="text-2xl font-bold">Connections</h1>
-            <div className="ml-2 text-gray-500 cursor-help">
+            <div className="ml-2 text-gray-500 dark:text-gray-400 cursor-help">
               <AlertCircle className="h-5 w-5" />
             </div>
           </div>
@@ -78,30 +78,50 @@ export default function Connections() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="mb-6">
-            <TabsTrigger value="all" className="px-6">All</TabsTrigger>
-            <TabsTrigger value="source" className="px-6">Source</TabsTrigger>
-            <TabsTrigger value="destination" className="px-6">Destination</TabsTrigger>
-            <TabsTrigger value="inactive" className="px-6">Inactive</TabsTrigger>
+            <TabsTrigger 
+              value="all" 
+              className="px-6 data-[state=active]:bg-gray-100 data-[state=active]:dark:bg-gray-800"
+            >
+              All
+            </TabsTrigger>
+            <TabsTrigger 
+              value="source" 
+              className="px-6 data-[state=active]:bg-gray-100 data-[state=active]:dark:bg-gray-800"
+            >
+              Source
+            </TabsTrigger>
+            <TabsTrigger 
+              value="destination" 
+              className="px-6 data-[state=active]:bg-gray-100 data-[state=active]:dark:bg-gray-800"
+            >
+              Destination
+            </TabsTrigger>
+            <TabsTrigger 
+              value="inactive" 
+              className="px-6 data-[state=active]:bg-gray-100 data-[state=active]:dark:bg-gray-800"
+            >
+              Inactive
+            </TabsTrigger>
           </TabsList>
           
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <div className="flex items-center text-sm text-gray-600 mb-4">
+          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+            <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-4">
               <AlertCircle className="h-4 w-4 mr-2" />
               <p>If you change the passwords on your social media accounts, the connection may become inactive, and you'll need to reconnect it.</p>
             </div>
 
             <div className="flex flex-col items-center justify-center py-12">
               <div className="mb-4">
-                <LinkIcon className="h-12 w-12 text-gray-300" />
+                <LinkIcon className="h-12 w-12 text-gray-300 dark:text-gray-700" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">No Connections Found</h3>
-              <p className="text-gray-500 text-center mb-6">
+              <h3 className="text-lg font-semibold mb-2 dark:text-gray-300">No Connections Found</h3>
+              <p className="text-gray-500 dark:text-gray-400 text-center mb-6">
                 Click on the Add Connection button and create a<br />
                 new connection
               </p>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button>
+                  <Button className="gradient-bg">
                     <Plus className="mr-2 h-4 w-4" />
                     Add New Connection
                   </Button>
