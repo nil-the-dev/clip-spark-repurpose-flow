@@ -27,6 +27,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     root.classList.remove('light', 'dark');
     root.classList.add(theme);
     localStorage.setItem('theme', theme);
+    
+    // This line helps force component re-renders when the theme changes
+    document.body.style.colorScheme = theme;
   }, [theme]);
 
   const toggleTheme = () => {
