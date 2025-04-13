@@ -440,6 +440,11 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
         ))}
       </div>
       
+      <div className="mb-4">
+        <h3 className="font-medium text-xl mb-1">{workflowName}</h3>
+        <p className="text-gray-500 dark:text-gray-400 text-sm">Workflow name</p>
+      </div>
+      
       <h3 className="font-medium text-xl mb-3">Content Details</h3>
       <p className="text-gray-600 dark:text-gray-300 mb-6">
         Upload your content and provide details for it to be repurposed across your selected destinations.
@@ -583,7 +588,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
 
         {!selectedWorkflowType && !preSelectedType && (
           <div className="space-y-4">
-            <div className="flex flex-wrap gap-3 mb-6">
+            <div className="grid grid-cols-1 gap-4">
               {workflowTypes.map((type) => (
                 <div 
                   key={type.id}
