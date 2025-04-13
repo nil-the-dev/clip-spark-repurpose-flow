@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 
 const Templates = () => {
@@ -72,13 +73,13 @@ const Templates = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
           <div>
             <h1 className="text-2xl font-bold mb-2">Content Templates</h1>
-            <p className="text-gray-500">
+            <p className="text-gray-500 dark:text-gray-400">
               Start with pre-built templates to accelerate your content repurposing
             </p>
           </div>
           <div className="mt-4 md:mt-0 flex w-full md:w-auto">
             <div className="relative w-full md:w-64">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
               <Input
                 placeholder="Search templates..."
                 className="pl-8 w-full"
@@ -96,7 +97,7 @@ const Templates = () => {
             >
               <CardContent className="p-4 text-center">
                 <h3 className="font-medium">{category.name}</h3>
-                <p className="text-sm text-gray-500">{category.count} templates</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{category.count} templates</p>
               </CardContent>
             </Card>
           ))}
@@ -116,16 +117,16 @@ const Templates = () => {
               <CardHeader className="p-4 pb-2">
                 <div className="flex justify-between items-start">
                   <CardTitle className="text-lg">{template.title}</CardTitle>
-                  <span className="text-xs px-2 py-1 bg-gray-100 rounded-full">
+                  <Badge className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
                     {template.category}
-                  </span>
+                  </Badge>
                 </div>
               </CardHeader>
               <CardContent className="p-4 pt-0">
-                <p className="text-sm text-gray-600">{template.description}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">{template.description}</p>
               </CardContent>
               <CardFooter className="p-4 pt-0 flex justify-between">
-                <span className="text-xs text-gray-500 flex items-center">
+                <span className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
                   Popularity: {template.popularity}
                 </span>
                 <Button variant="outline" size="sm">Use Template</Button>
