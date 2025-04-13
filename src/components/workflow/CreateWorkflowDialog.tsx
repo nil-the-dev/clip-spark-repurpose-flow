@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   Dialog,
@@ -8,11 +9,12 @@ import {
   DialogFooter
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Plus, Repeat, ListVideo, Share2, Upload, FileUp, ArrowLeft } from 'lucide-react';
+import { Plus, Repeat, ListVideo, Share2, Upload, FileUp, ArrowLeft, Tag } from 'lucide-react';
 import { Form, FormField, FormItem, FormLabel, FormControl } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { useToast } from '@/hooks/use-toast';
+import { Textarea } from '@/components/ui/textarea';
 
 interface CreateWorkflowDialogProps {
   isOpen: boolean;
@@ -33,6 +35,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
   const [showDestinationSelector, setShowDestinationSelector] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [workflowName, setWorkflowName] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropAreaRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -143,6 +146,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
     setShowDestinationSelector(false);
     setCurrentStep(preSelectedType === 'multiple' ? 1 : 1);
     setUploadedFile(null);
+    setWorkflowName('');
     form.reset();
     onClose();
   };
@@ -197,6 +201,32 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
       fileInputRef.current.click();
     }
   };
+
+  // New helper to check if the workflow creation can proceed
+  const canCreateWorkflow = () => {
+    if (!workflowName.trim()) return false;
+    
+    if (selectedWorkflowType === 'multiple') {
+      return selectedDestinations.length > 0;
+    } else {
+      return selectedSource && selectedDestinations.length > 0;
+    }
+  };
+
+  const renderWorkflowNameInput = () => (
+    <div className="mb-6">
+      <div className="flex items-center gap-2 mb-2">
+        <Tag className="h-5 w-5 text-primary" />
+        <h4 className="font-medium">Workflow Name</h4>
+      </div>
+      <Input
+        placeholder="Enter a name for your workflow"
+        value={workflowName}
+        onChange={(e) => setWorkflowName(e.target.value)}
+        className="w-full border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white focus:border-primary dark:focus:border-white dark:placeholder-gray-400"
+      />
+    </div>
+  );
 
   const renderMultipleDestinations = () => (
     <div>
@@ -271,6 +301,8 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
   const renderStep1 = () => (
     <>
       <div className="mt-4 pt-4 border-t dark:border-gray-700">
+        {renderWorkflowNameInput()}
+        
         <div className="flex flex-wrap gap-3 mb-6">
           {workflowTypes.map((type) => (
             <button
@@ -312,7 +344,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
                       onClick={() => handleSourceSelection(platform.id)}
                       className={`p-3 border rounded-md flex items-center hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer dark:border-gray-700 transition-colors ${
                         selectedSource === platform.id 
-                          ? 'border-primary dark:border-white/30 bg-primary/5 dark:bg-white/5' 
+                          ? 'border-primary dark:border-white bg-primary/5 dark:bg-white/5' 
                           : 'border-gray-200 dark:border-gray-700'
                       }`}
                     >
@@ -333,7 +365,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
                       onClick={() => handleDestinationSelection(platform.id)}
                       className={`p-3 border rounded-md flex items-center hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer dark:border-gray-700 transition-colors ${
                         selectedDestinations[0] === platform.id 
-                          ? 'border-primary dark:border-white/30 bg-primary/5 dark:bg-white/5' 
+                          ? 'border-primary dark:border-white bg-primary/5 dark:bg-white/5' 
                           : 'border-gray-200 dark:border-gray-700'
                       }`}
                     >
@@ -371,14 +403,14 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
             <Button 
               className="bg-primary hover:bg-primary/90 text-primary-foreground"
               onClick={handleNext}
-              disabled={selectedDestinations.length === 0}
+              disabled={!workflowName.trim() || selectedDestinations.length === 0}
             >
               Next
             </Button>
           ) : (
             <Button 
               className="bg-primary hover:bg-primary/90 text-primary-foreground" 
-              disabled={!selectedSource || selectedDestinations.length === 0}
+              disabled={!canCreateWorkflow()}
             >
               Create Workflow
             </Button>
@@ -489,7 +521,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <textarea
+                  <Textarea
                     className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-background text-foreground"
                     rows={4}
                     placeholder="Enter a description for your content"
@@ -517,7 +549,10 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
         >
           Cancel
         </Button>
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+        <Button 
+          className="bg-primary hover:bg-primary/90 text-primary-foreground"
+          disabled={!uploadedFile || !form.getValues().title}
+        >
           Create Workflow
         </Button>
       </DialogFooter>
@@ -546,6 +581,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
 
         {!selectedWorkflowType && !preSelectedType && (
           <div className="space-y-4">
+            {renderWorkflowNameInput()}
             {workflowTypes.map((type) => (
               <div 
                 key={type.id}
