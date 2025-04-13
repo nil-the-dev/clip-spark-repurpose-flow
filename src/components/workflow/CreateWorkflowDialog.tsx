@@ -237,6 +237,8 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
         Select destinations to repurpose your content across various platforms.
       </p>
 
+      {renderWorkflowNameInput()}
+
       <div>
         <h4 className="font-medium mb-3">Destinations</h4>
         {selectedDestinations.length > 0 ? (
@@ -301,8 +303,6 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
   const renderStep1 = () => (
     <>
       <div className="mt-4 pt-4 border-t dark:border-gray-700">
-        {renderWorkflowNameInput()}
-        
         <div className="flex flex-wrap gap-3 mb-6">
           {workflowTypes.map((type) => (
             <button
@@ -333,6 +333,8 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
                 ? 'Whenever you upload new content to your Source platform, it will be automatically published to your Destination within 2 hours.'
                 : 'Automatically schedule and publish your existing content from your Source platform to your Destination up to 5 times per day.'}
             </p>
+
+            {renderWorkflowNameInput()}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -581,25 +583,26 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
 
         {!selectedWorkflowType && !preSelectedType && (
           <div className="space-y-4">
-            {renderWorkflowNameInput()}
-            {workflowTypes.map((type) => (
-              <div 
-                key={type.id}
-                onClick={() => handleSelection(type.id)}
-                className={`p-4 rounded-lg border cursor-pointer transition-all ${
-                  selectedWorkflowType === type.id
-                    ? 'border-primary/70 bg-primary/5 dark:border-primary/70 dark:bg-primary/10'
-                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800'
-                }`}
-              >
-                <div className="flex items-center">
-                  <div className="h-10 w-10 flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-800 mr-3">
-                    {type.icon}
+            <div className="flex flex-wrap gap-3 mb-6">
+              {workflowTypes.map((type) => (
+                <div 
+                  key={type.id}
+                  onClick={() => handleSelection(type.id)}
+                  className={`p-4 rounded-lg border cursor-pointer transition-all ${
+                    selectedWorkflowType === type.id
+                      ? 'border-primary/70 bg-primary/5 dark:border-primary/70 dark:bg-primary/10'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800'
+                  }`}
+                >
+                  <div className="flex items-center">
+                    <div className="h-10 w-10 flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-800 mr-3">
+                      {type.icon}
+                    </div>
+                    <span className="font-medium">{type.name}</span>
                   </div>
-                  <span className="font-medium">{type.name}</span>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
 
