@@ -1,13 +1,43 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Play, Upload, Link } from 'lucide-react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import CreateWorkflowDialog from '@/components/workflow/CreateWorkflowDialog';
+import SelectWorkflowDialog from '@/components/workflow/SelectWorkflowDialog';
+
+const sampleWorkflows = [
+  {
+    id: "1",
+    name: "YouTube to Short-Form",
+    description: "Convert YouTube videos to TikTok, Reels, and Shorts",
+    platforms: ["YouTube", "TikTok", "Instagram", "YouTube Shorts"],
+    type: "future",
+    status: "Active"
+  },
+  {
+    id: "2",
+    name: "Podcast Repurposing",
+    description: "Turn podcast episodes into audiograms and clips",
+    platforms: ["Spotify", "Twitter", "LinkedIn", "Instagram"],
+    type: "multiple",
+    status: "Active"
+  },
+  {
+    id: "3",
+    name: "Blog Content Automation",
+    description: "Convert blog posts into carousel posts and threads",
+    platforms: ["WordPress", "Twitter", "LinkedIn", "Instagram"],
+    type: "multiple",
+    status: "Paused"
+  }
+];
 
 const Dashboard = () => {
   const [isWorkflowDialogOpen, setIsWorkflowDialogOpen] = useState(false);
+  const [isSelectWorkflowDialogOpen, setIsSelectWorkflowDialogOpen] = useState(false);
+  
+  const [workflows, setWorkflows] = useState(sampleWorkflows);
 
   const handleOpenWorkflowDialog = () => {
     setIsWorkflowDialogOpen(true);
@@ -16,6 +46,10 @@ const Dashboard = () => {
   const handleCloseWorkflowDialog = () => {
     setIsWorkflowDialogOpen(false);
   };
+  
+  const handleUploadContent = () => {
+    setIsSelectWorkflowDialogOpen(true);
+  };
 
   return (
     <DashboardLayout>
@@ -23,7 +57,11 @@ const Dashboard = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <div className="flex items-center space-x-4">
-            <Button variant="outline" className="flex items-center">
+            <Button 
+              variant="outline" 
+              className="flex items-center"
+              onClick={handleUploadContent}
+            >
               <Upload className="mr-2 h-4 w-4" />
               Upload Content
             </Button>
@@ -40,6 +78,12 @@ const Dashboard = () => {
         <CreateWorkflowDialog 
           isOpen={isWorkflowDialogOpen} 
           onClose={handleCloseWorkflowDialog} 
+        />
+        
+        <SelectWorkflowDialog
+          isOpen={isSelectWorkflowDialogOpen}
+          onClose={() => setIsSelectWorkflowDialogOpen(false)}
+          workflows={workflows}
         />
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

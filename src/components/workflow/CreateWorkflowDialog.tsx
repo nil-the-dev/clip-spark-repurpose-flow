@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Dialog,
   DialogContent,
@@ -18,14 +18,16 @@ interface CreateWorkflowDialogProps {
   isOpen: boolean;
   onClose: () => void;
   isFirstWorkflow?: boolean;
+  preSelectedType?: string;
 }
 
 const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({ 
   isOpen, 
   onClose,
-  isFirstWorkflow = true
+  isFirstWorkflow = true,
+  preSelectedType = null
 }) => {
-  const [selectedWorkflowType, setSelectedWorkflowType] = useState<string | null>(null);
+  const [selectedWorkflowType, setSelectedWorkflowType] = useState<string | null>(preSelectedType);
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
   const [selectedDestinations, setSelectedDestinations] = useState<string[]>([]);
   const [showDestinationSelector, setShowDestinationSelector] = useState(false);
@@ -41,6 +43,15 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
       description: '',
     }
   });
+
+  useEffect(() => {
+    if (isOpen && preSelectedType) {
+      setSelectedWorkflowType(preSelectedType);
+      if (preSelectedType === 'multiple') {
+        setCurrentStep(1);
+      }
+    }
+  }, [isOpen, preSelectedType]);
   
   const workflowTypes = [
     {
@@ -126,11 +137,11 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
   };
 
   const handleClose = () => {
-    setSelectedWorkflowType(null);
+    setSelectedWorkflowType(preSelectedType);
     setSelectedSource(null);
     setSelectedDestinations([]);
     setShowDestinationSelector(false);
-    setCurrentStep(1);
+    setCurrentStep(preSelectedType === 'multiple' ? 1 : 1);
     setUploadedFile(null);
     form.reset();
     onClose();
@@ -517,7 +528,7 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="mb-2">
-          {isFirstWorkflow && !selectedWorkflowType && (
+          {isFirstWorkflow && !preSelectedType && !selectedWorkflowType && (
             <div className="mb-4">
               <DialogTitle className="text-2xl">Create your first workflow</DialogTitle>
               <DialogDescription className="text-base mt-1">
@@ -525,12 +536,15 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
               </DialogDescription>
             </div>
           )}
-          {!selectedWorkflowType && (
+          {!selectedWorkflowType && !preSelectedType && (
             <h3 className="text-xl font-semibold">Choose a workflow type</h3>
+          )}
+          {preSelectedType === 'multiple' && (
+            <h3 className="text-xl font-semibold">Repurpose one content in multiple destinations</h3>
           )}
         </DialogHeader>
 
-        {!selectedWorkflowType && (
+        {!selectedWorkflowType && !preSelectedType && (
           <div className="space-y-4">
             {workflowTypes.map((type) => (
               <div 
@@ -553,8 +567,8 @@ const CreateWorkflowDialog: React.FC<CreateWorkflowDialogProps> = ({
           </div>
         )}
 
-        {selectedWorkflowType && currentStep === 1 && renderStep1()}
-        {selectedWorkflowType && currentStep === 2 && renderStep2()}
+        {(selectedWorkflowType || preSelectedType) && currentStep === 1 && renderStep1()}
+        {(selectedWorkflowType || preSelectedType) && currentStep === 2 && renderStep2()}
       </DialogContent>
     </Dialog>
   );
