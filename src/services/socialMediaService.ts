@@ -1,12 +1,12 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
 import { toast } from 'sonner';
 
 // YouTube API credentials
 const YOUTUBE_CLIENT_ID = '182818486779-1ufamttgqemqrekgpkrioj7he4sq4uaj.apps.googleusercontent.com';
 const YOUTUBE_CLIENT_SECRET = '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';
 const YOUTUBE_REDIRECT_URI = `${window.location.origin}/connections/callback`;
+const YOUTUBE_API_KEY = 'AIzaSyCStHQAmfdFlEZOimU8P398_yiSyrtq1wY';
 const YOUTUBE_SCOPES = [
   'https://www.googleapis.com/auth/youtube.upload',
   'https://www.googleapis.com/auth/youtube',
@@ -43,15 +43,20 @@ export const connectYouTube = () => {
 
 export const handleYouTubeCallback = async (code: string, state: string) => {
   try {
+    console.log('Starting YouTube callback handling...');
+    
     // Verify the state parameter to prevent CSRF attacks
     const storedState = localStorage.getItem('youtube_auth_state');
     if (state !== storedState) {
+      console.error('State mismatch:', state, storedState);
       toast.error('Authentication failed: Invalid state parameter.');
       return null;
     }
     
     // Clear the state from localStorage
     localStorage.removeItem('youtube_auth_state');
+    
+    console.log('Exchanging code for tokens...');
     
     // Exchange the authorization code for tokens
     const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
@@ -65,45 +70,67 @@ export const handleYouTubeCallback = async (code: string, state: string) => {
         client_secret: YOUTUBE_CLIENT_SECRET,
         redirect_uri: YOUTUBE_REDIRECT_URI,
         grant_type: 'authorization_code',
-      }),
+      }).toString(),
     });
     
     if (!tokenResponse.ok) {
       const errorData = await tokenResponse.json();
       console.error('Token exchange failed:', errorData);
-      toast.error('Failed to connect YouTube: Token exchange failed.');
+      toast.error(`Failed to connect YouTube: ${errorData.error || 'Token exchange failed'}`);
       return null;
     }
     
     const tokenData = await tokenResponse.json();
+    console.log('Token received:', tokenData.access_token ? 'Token present' : 'No token', 'Expires in:', tokenData.expires_in);
     
-    // Get user info from Google
-    const userInfoResponse = await fetch('https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true', {
-      headers: {
-        Authorization: `Bearer ${tokenData.access_token}`,
-      },
-    });
+    if (!tokenData.access_token) {
+      console.error('No access token received');
+      toast.error('Failed to connect YouTube: No access token received');
+      return null;
+    }
+    
+    // Get user info from YouTube/Google
+    console.log('Fetching channel info...');
+    const userInfoResponse = await fetch(
+      `https://www.googleapis.com/youtube/v3/channels?part=snippet,contentDetails,statistics&mine=true&key=${YOUTUBE_API_KEY}`,
+      {
+        headers: {
+          Authorization: `Bearer ${tokenData.access_token}`,
+        },
+      }
+    );
     
     if (!userInfoResponse.ok) {
-      console.error('Failed to fetch user info:', await userInfoResponse.json());
+      const errorInfo = await userInfoResponse.json();
+      console.error('Failed to fetch user info:', errorInfo);
       toast.error('Failed to get YouTube channel information.');
       return null;
     }
     
     const userInfo = await userInfoResponse.json();
-    const channelInfo = userInfo.items?.[0] || {};
+    console.log('Channel info received:', userInfo);
+    
+    if (!userInfo.items || userInfo.items.length === 0) {
+      console.error('No channel information found');
+      toast.error('No YouTube channel found for this account.');
+      return null;
+    }
+    
+    const channelInfo = userInfo.items[0];
     
     // Get the authenticated user from Supabase
     const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) {
+      console.error('No authenticated user found');
       toast.error('User not authenticated. Please log in.');
       return null;
     }
     
     // Calculate token expiration time
-    const expiresAt = new Date(Date.now() + tokenData.expires_in * 1000).toISOString();
+    const expiresAt = new Date(Date.now() + (tokenData.expires_in * 1000)).toISOString();
     
+    console.log('Storing connection in database...');
     // Store the connection in Supabase
     const { data, error } = await supabase
       .from('social_auth')
@@ -111,14 +138,17 @@ export const handleYouTubeCallback = async (code: string, state: string) => {
         user_id: user.id,
         provider: 'youtube',
         provider_name: 'YouTube',
-        provider_id: channelInfo.id || null,
+        provider_id: channelInfo.id,
         access_token: tokenData.access_token,
-        refresh_token: tokenData.refresh_token,
+        refresh_token: tokenData.refresh_token || null,
         expires_at: expiresAt,
         platform_specific_data: {
-          channel_id: channelInfo.id || null,
+          channel_id: channelInfo.id,
           channel_title: channelInfo.snippet?.title || 'YouTube Channel',
           channel_thumbnail: channelInfo.snippet?.thumbnails?.default?.url || null,
+          subscriber_count: channelInfo.statistics?.subscriberCount,
+          video_count: channelInfo.statistics?.videoCount,
+          view_count: channelInfo.statistics?.viewCount,
           connected_at: new Date().toISOString()
         }
       })
@@ -131,8 +161,9 @@ export const handleYouTubeCallback = async (code: string, state: string) => {
       return null;
     }
     
+    console.log('Connection successful!', data);
     toast.success('YouTube Connected', {
-      description: 'Your YouTube account has been successfully connected.',
+      description: `Successfully connected to ${channelInfo.snippet?.title || 'your YouTube channel'}.`,
     });
     
     return data;

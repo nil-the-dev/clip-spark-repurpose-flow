@@ -5,41 +5,50 @@ import { handleYouTubeCallback } from '@/services/socialMediaService';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function ConnectionCallback() {
   const [status, setStatus] = useState<'processing' | 'success' | 'error'>('processing');
   const [message, setMessage] = useState('Processing your connection request...');
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
   
   useEffect(() => {
     const processOAuthCallback = async () => {
-      // Parse the URL parameters
-      const params = new URLSearchParams(location.search);
-      const code = params.get('code');
-      const state = params.get('state');
-      const error = params.get('error');
-      
-      if (error) {
-        setStatus('error');
-        setMessage(`Authentication failed: ${error}`);
-        setTimeout(() => {
-          navigate('/connections');
-        }, 5000);
-        return;
-      }
-      
-      if (!code || !state) {
-        setStatus('error');
-        setMessage('Invalid callback parameters.');
-        setTimeout(() => {
-          navigate('/connections');
-        }, 5000);
-        return;
-      }
-      
       try {
-        console.log('Processing callback with code:', code.substring(0, 10) + '...');
+        // Parse the URL parameters
+        const params = new URLSearchParams(location.search);
+        const code = params.get('code');
+        const state = params.get('state');
+        const errorParam = params.get('error');
+        
+        console.log('Callback params:', { 
+          code: code ? `${code.substring(0, 10)}...` : 'none', 
+          state: state || 'none',
+          error: errorParam || 'none'
+        });
+        
+        if (errorParam) {
+          setStatus('error');
+          setMessage(`Authentication failed: ${errorParam}`);
+          setError(errorParam);
+          setTimeout(() => {
+            navigate('/connections');
+          }, 5000);
+          return;
+        }
+        
+        if (!code || !state) {
+          setStatus('error');
+          setMessage('Invalid callback parameters.');
+          setError('Missing code or state parameter');
+          setTimeout(() => {
+            navigate('/connections');
+          }, 5000);
+          return;
+        }
+        
         // Handle the callback based on the platform
         // For now, we only support YouTube
         const result = await handleYouTubeCallback(code, state);
@@ -52,7 +61,8 @@ export default function ConnectionCallback() {
           }, 2000);
         } else {
           setStatus('error');
-          setMessage('Failed to complete the connection. Please try again.');
+          setMessage('Failed to complete the connection. Please check console for details.');
+          setError('Connection processing failed');
           setTimeout(() => {
             navigate('/connections');
           }, 5000);
@@ -60,7 +70,11 @@ export default function ConnectionCallback() {
       } catch (error) {
         console.error('Error in callback processing:', error);
         setStatus('error');
-        setMessage('An unexpected error occurred. Check console for details.');
+        setMessage('An unexpected error occurred.');
+        setError(error instanceof Error ? error.message : 'Unknown error');
+        toast.error('Connection failed', {
+          description: 'An unexpected error occurred during the connection process.',
+        });
         setTimeout(() => {
           navigate('/connections');
         }, 5000);
@@ -98,6 +112,12 @@ export default function ConnectionCallback() {
               </div>
             )}
             <p className="text-center text-gray-700 dark:text-gray-300">{message}</p>
+            
+            {error && (
+              <div className="mt-2 p-2 bg-red-50 dark:bg-red-900/20 rounded text-xs text-red-600 dark:text-red-400">
+                Error details: {error}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
