@@ -1,9 +1,11 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 // YouTube API credentials
 const YOUTUBE_CLIENT_ID = '182818486779-1ufamttgqemqrekgpkrioj7he4sq4uaj.apps.googleusercontent.com';
+const YOUTUBE_CLIENT_SECRET = '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';
 const YOUTUBE_REDIRECT_URI = `${window.location.origin}/connections/callback`;
 const YOUTUBE_SCOPES = [
   'https://www.googleapis.com/auth/youtube.upload',
@@ -40,76 +42,103 @@ export const connectYouTube = () => {
 };
 
 export const handleYouTubeCallback = async (code: string, state: string) => {
-  const { toast } = useToast();
-  
-  // Verify the state parameter to prevent CSRF attacks
-  const storedState = localStorage.getItem('youtube_auth_state');
-  if (state !== storedState) {
-    toast({
-      variant: 'destructive',
-      title: 'Authentication failed',
-      description: 'Invalid state parameter. Please try again.',
-    });
-    return null;
-  }
-  
-  // Clear the state from localStorage
-  localStorage.removeItem('youtube_auth_state');
-  
   try {
-    // Exchange the authorization code for tokens using our backend
-    // In a real application, you would make a request to your backend to handle this exchange
-    // For now, we'll simulate this by directly storing in Supabase
-    const user = supabase.auth.getUser();
-    const userData = await user;
-    
-    if (!userData.data.user) {
-      toast({
-        variant: 'destructive',
-        title: 'Authentication failed',
-        description: 'User not authenticated. Please log in.',
-      });
+    // Verify the state parameter to prevent CSRF attacks
+    const storedState = localStorage.getItem('youtube_auth_state');
+    if (state !== storedState) {
+      toast.error('Authentication failed: Invalid state parameter.');
       return null;
     }
+    
+    // Clear the state from localStorage
+    localStorage.removeItem('youtube_auth_state');
+    
+    // Exchange the authorization code for tokens
+    const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        code,
+        client_id: YOUTUBE_CLIENT_ID,
+        client_secret: YOUTUBE_CLIENT_SECRET,
+        redirect_uri: YOUTUBE_REDIRECT_URI,
+        grant_type: 'authorization_code',
+      }),
+    });
+    
+    if (!tokenResponse.ok) {
+      const errorData = await tokenResponse.json();
+      console.error('Token exchange failed:', errorData);
+      toast.error('Failed to connect YouTube: Token exchange failed.');
+      return null;
+    }
+    
+    const tokenData = await tokenResponse.json();
+    
+    // Get user info from Google
+    const userInfoResponse = await fetch('https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true', {
+      headers: {
+        Authorization: `Bearer ${tokenData.access_token}`,
+      },
+    });
+    
+    if (!userInfoResponse.ok) {
+      console.error('Failed to fetch user info:', await userInfoResponse.json());
+      toast.error('Failed to get YouTube channel information.');
+      return null;
+    }
+    
+    const userInfo = await userInfoResponse.json();
+    const channelInfo = userInfo.items?.[0] || {};
+    
+    // Get the authenticated user from Supabase
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      toast.error('User not authenticated. Please log in.');
+      return null;
+    }
+    
+    // Calculate token expiration time
+    const expiresAt = new Date(Date.now() + tokenData.expires_in * 1000).toISOString();
     
     // Store the connection in Supabase
     const { data, error } = await supabase
       .from('social_auth')
       .insert({
-        user_id: userData.data.user.id,
+        user_id: user.id,
         provider: 'youtube',
         provider_name: 'YouTube',
-        access_token: 'simulated_token', // This would come from the backend in a real app
-        refresh_token: 'simulated_refresh_token', // This would come from the backend in a real app
-        expires_at: new Date(Date.now() + 3600 * 1000).toISOString(),
-        platform_specific_data: { 
-          connected_at: new Date().toISOString() 
+        provider_id: channelInfo.id || null,
+        access_token: tokenData.access_token,
+        refresh_token: tokenData.refresh_token,
+        expires_at: expiresAt,
+        platform_specific_data: {
+          channel_id: channelInfo.id || null,
+          channel_title: channelInfo.snippet?.title || 'YouTube Channel',
+          channel_thumbnail: channelInfo.snippet?.thumbnails?.default?.url || null,
+          connected_at: new Date().toISOString()
         }
       })
       .select()
       .single();
     
     if (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Connection failed',
-        description: error.message,
-      });
+      console.error('Error storing connection:', error);
+      toast.error('Connection failed: ' + error.message);
       return null;
     }
     
-    toast({
-      title: 'YouTube Connected',
+    toast.success('YouTube Connected', {
       description: 'Your YouTube account has been successfully connected.',
     });
     
     return data;
   } catch (error) {
-    toast({
-      variant: 'destructive',
-      title: 'Connection failed',
-      description: 'An unexpected error occurred. Please try again.',
-    });
+    console.error('Unexpected error during YouTube connection:', error);
+    toast.error('Connection failed: An unexpected error occurred.');
     return null;
   }
 };

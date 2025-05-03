@@ -39,6 +39,7 @@ export default function ConnectionCallback() {
       }
       
       try {
+        console.log('Processing callback with code:', code.substring(0, 10) + '...');
         // Handle the callback based on the platform
         // For now, we only support YouTube
         const result = await handleYouTubeCallback(code, state);
@@ -57,8 +58,9 @@ export default function ConnectionCallback() {
           }, 5000);
         }
       } catch (error) {
+        console.error('Error in callback processing:', error);
         setStatus('error');
-        setMessage('An unexpected error occurred.');
+        setMessage('An unexpected error occurred. Check console for details.');
         setTimeout(() => {
           navigate('/connections');
         }, 5000);
