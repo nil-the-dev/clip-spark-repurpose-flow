@@ -9,6 +9,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Connections from "./pages/Connections";
+import ConnectionCallback from "./pages/ConnectionCallback"; // Add this import
 import Workflow from "./pages/Workflow";
 import Templates from "./pages/Templates";
 import CalendarPage from "./pages/CalendarPage";
@@ -41,6 +42,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Connections />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/connections/callback" 
+                element={
+                  <ProtectedRoute>
+                    <ConnectionCallback />
                   </ProtectedRoute>
                 } 
               />

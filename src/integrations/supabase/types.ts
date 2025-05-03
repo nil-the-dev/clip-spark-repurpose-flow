@@ -33,6 +33,51 @@ export type Database = {
         }
         Relationships: []
       }
+      social_auth: {
+        Row: {
+          access_token: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          platform_specific_data: Json | null
+          provider: string
+          provider_data: Json | null
+          provider_id: string | null
+          provider_name: string | null
+          refresh_token: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          platform_specific_data?: Json | null
+          provider: string
+          provider_data?: Json | null
+          provider_id?: string | null
+          provider_name?: string | null
+          refresh_token?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          access_token?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          platform_specific_data?: Json | null
+          provider?: string
+          provider_data?: Json | null
+          provider_id?: string | null
+          provider_name?: string | null
+          refresh_token?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
